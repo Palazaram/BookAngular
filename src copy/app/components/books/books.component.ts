@@ -3,8 +3,10 @@ import {Router} from '@angular/router';
 import {Book} from 'src/app/models/book';
 import {BookService} from 'src/app/services/book.service';
 import {BehaviorSubject, Subject, switchMap, tap} from 'rxjs';
-import * as moment from 'moment';
 
+/*import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';*/
 
 export interface Sort {
   sort: keyof Book;
@@ -26,7 +28,7 @@ export class BooksComponent implements OnInit {
   bookWithSearch$ = this.search$.pipe(switchMap(
     text => this.booksService.getall(text).pipe(tap(data => data.sort((a: Book, b: Book) => {
       const sort = this.sort$.value;
-      if (sort) {
+      if(sort) {
         return +a[sort.sort] - +b[sort.sort];
       }
       /*switch (this.sort$.value?.sort) {
@@ -45,23 +47,6 @@ export class BooksComponent implements OnInit {
 
   }
 
-  protected sort(books: Book[], sort: Sort): Book[] {
-    return books.sort((a: Book, b: Book) => {
-      let result = 0;
-      switch (sort.sort) {
-        case 'title':
-          result = a.title.localeCompare(b.title);
-          break;
-        case 'pageCount':
-          result = a.pageCount - b.pageCount;
-          break;
-        case 'createdAt':
-          result = moment(a.createdAt).diff(moment(b.createdAt));
-          break;
-      }
-      return result;
-    });
-  }
 
   private getBooks(term: string = "") {
 
