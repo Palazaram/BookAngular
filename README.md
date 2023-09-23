@@ -1,4 +1,4 @@
-**Посилання на url api знаходиться src => environment => environment.development **
+**Посилання на url api знаходиться src => environment => environment.development**
 
 # WebApiApp
 
