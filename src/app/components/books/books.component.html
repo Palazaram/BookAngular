@@ -1,113 +1,81 @@
 <div class="container px-4  w-2/3 w-1/2 overflow-x-auto mt-4">
-   <h2 class="text-3xl font-semibold leading-normal mt-0 mb-5 text-gray-800">Books</h2>
+  <h2 class="text-3xl font-semibold leading-normal mt-0 mb-5 text-gray-800">Books</h2>
 
-   <div class="flex">
-      <div class="flex-auto w-65">
-         <input type="text" #term placeholder="Search by title" (input)="search$.next(term.value)"
-            class="w-full shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-      </div>
+  <div class="flex">
+    <div class="">
+      <input type="text" #term placeholder="Search by title" (input)="search$.next(term.value)"
+        class="w-full shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+      <input type="date" id="start" (change)="updateRange($event)" [value]="filterStartDate$ | async">
+      <input type="date" id="end" (change)="updateRange($event)" [value]="filterEndDate$ | async" />
 
-   </div>
-   <div class="my-2">
-      <button routerLink="/add-book" type="button"
-         class="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add
-         more</button>
-   </div>
-   <table class="my-4 w-full border-gray-700 text-sm text-left text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-         <tr>
-            <th scope="col" class="py-3 px-6">
-               Title
-            </th>
-            <th scope="col" class="py-3 px-6">
-               Publication date
-            </th>
-            <th scope="col" class="py-3 px-6">
-               Description
-            </th>
-            <th scope="col" class="py-3 px-6">
-               Page count
-            </th>
-            <th scope="col" class="py-3 px-6">
-               Actions
-            </th>
-         </tr>
-      </thead>
-      <tbody>
-         <tr *ngFor="let book of bookWithSearch$ | async; index as i" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <td class="py-4 px-6">
-               {{book.title}}
-            </td>
-            <td class="py-4 px-6">
-               {{book.createdAt}}
-            </td>
-            <td class="py-4 px-6">
-               {{book.description}}
-            </td>
-            <td class="py-4 px-6">
-               {{book.pageCount}}
-            </td>
-            <td>
-               <button type="button" (click)="edit(book.id)"
-                  class="px-2 rounded-md py-2 bg-gray-700 text-white">Edit</button>
-               <button type="button" (click)="delete(book.id, i)"
-                  class="mx-2 px-2 rounded-md py-2 bg-red-700 text-white">Delete</button>
-            </td>
+      <button class="btn-this-month" (click)="setThisMonth()">This month</button>
+      <button class="btn-this-year" (click)="setThisYear()">This Year</button>
+      <button class="btn-reset" (click)="reset()">Reset</button>
+    </div>
+  </div>
+  <div class="my-2">
+    <button routerLink="/add-book" type="button"
+      class="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      Add
+      more
+    </button>
+  </div>
+  <table class="my-4 w-full border-gray-700 text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="py-3 px-6">
+          <button type="button" class="sort-btn" (click)="setSort('title')">Title
+            <span *ngIf="(sort$ | async)?.sort==='title'">{{(sort$ | async)?.desk ? '↓' : '↑'}}</span></button>
+        </th>
+        <th scope="col" class="py-3 px-6">
+          <button type="button" class="sort-btn" (click)="setSort('createdAt')">Publication date
+            <span *ngIf="(sort$ | async)?.sort==='createdAt'">{{(sort$ | async)?.desk ? '↓' : '↑'}}</span></button>
 
-         </tr>
-      </tbody>
-   </table>
+        </th>
+        <th scope="col" class="py-3 px-6">
+          Description
+        </th>
+        <th scope="col" class="py-3 px-6">
+          <button type="button" class="sort-btn" (click)="setSort('pageCount')">Page count
+            <span *ngIf="(sort$ | async)?.sort==='pageCount'">{{(sort$ | async)?.desk ? '↓' : '↑'}}</span></button>
+        </th>
+        <th scope="col" class="py-3 px-6">
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let book of books$ | async; index as i" (click)="selectedBookId = book.id"
+        [class.active-book]="selectedBookId === book.id"
+        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 row">
+        <td class="py-4 px-6">
+          {{book.title}}
+        </td>
+        <td class="py-4 px-6">
+          {{book.createdAt | date : 'dd-MM-yyyy'}}
+        </td>
+        <td class="py-4 px-6">
+          {{book.description}}
+        </td>
+        <td class="py-4 px-6">
+          {{book.pageCount}}
+        </td>
+        <td>
+          <button type="button" (click)="edit(book.id)" class="px-2 rounded-md py-2 bg-gray-700 text-white">Edit
+          </button>
+          <button type="button" (click)="delete(book.id, i)"
+            class="mx-2 px-2 rounded-md py-2 bg-red-700 text-white">Delete
+          </button>
+        </td>
 
-   <!-- <mat-table *ngFor="let book of books; index as i" mat-table [dataSource]="dataSource" matSort
-      (matSortChange)="announceSortChange($event)" class="mat-elevation-z8">
+      </tr>
+    </tbody>
+  </table>
 
+  <!-- <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
+  </canvas> -->
 
-      <ng-container matColumnDef="title">
-         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by title">
-            Title
-         </th>
-         <td mat-cell *matCellDef="let book"> {{book.title}} </td>
-      </ng-container>
+  <canvas id="ChartId">
 
-
-      <ng-container matColumnDef="createdAt">
-         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by createdAt">
-            Publication date
-         </th>
-         <td mat-cell *matCellDef="let book"> {{book.createdAt}} </td>
-      </ng-container>
-
-
-      <ng-container matColumnDef="">
-         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="">
-            Description
-         </th>
-         <td mat-cell *matCellDef="let book"> {{book.description}} </td>
-      </ng-container>
-
-
-      <ng-container matColumnDef="pageCount">
-         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by pageCount">
-            Page count
-         </th>
-         <td mat-cell *matCellDef="let book"> {{book.pageCount}} </td>
-      </ng-container>
-
-
-      <ng-container matColumnDef="">
-         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="">
-            Action
-         </th>
-         <td mat-cell *matCellDef="let book">
-            <button type="button" (click)="edit(book.id)"
-               class="px-2 rounded-md py-2 bg-gray-700 text-white">Edit</button>
-            <button type="button" (click)="delete(book.id, i)"
-               class="mx-2 px-2 rounded-md py-2 bg-red-700 text-white">Delete</button>
-         </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-   </mat-table> -->
-
-
+  </canvas>
 </div>

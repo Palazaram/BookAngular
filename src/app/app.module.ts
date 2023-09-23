@@ -7,6 +7,9 @@ import { AddBookComponent } from './components/add-book/add-book.component';
 import { BooksComponent } from './components/books/books.component';
 import { HttpClientModule } from '@angular/common/http';
 import {ReactiveFormsModule} from '@angular/forms';
+import {NgChartsModule} from 'ng2-charts';
+
+
 
 
 @NgModule({
@@ -20,6 +23,7 @@ import {ReactiveFormsModule} from '@angular/forms';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    NgChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

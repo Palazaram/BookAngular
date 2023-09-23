@@ -3,18 +3,20 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Status } from 'src/app/models/status';
 import { BookService } from 'src/app/services/book.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-add-book',
   templateUrl: './add-book.component.html',
-  styleUrls: ['./add-book.component.scss']
+  styleUrls: ['./add-book.component.scss'],
+  providers: [DatePipe]
 })
 export class AddBookComponent implements OnInit {
   frm!: FormGroup;
 
   status!: Status;
 
-  constructor(private fb: FormBuilder, private bookService: BookService, route: ActivatedRoute) {
+  constructor(private fb: FormBuilder, private bookService: BookService, private route: ActivatedRoute, private datePipe: DatePipe) {
     const id = route.snapshot.params['id'];
     if (id) {
       bookService.getById(id).subscribe({
@@ -26,7 +28,6 @@ export class AddBookComponent implements OnInit {
         }
       });
     }
-
   }
 
   get f() {
@@ -49,8 +50,6 @@ export class AddBookComponent implements OnInit {
     });
   }
 
-
-  /*-------------------------------------------------*/
   ngOnInit(): void {
     this.frm = this.fb.group({
       'id': [0],
@@ -59,6 +58,24 @@ export class AddBookComponent implements OnInit {
       'description': ['', Validators.required],
       'pageCount': ['', Validators.required]
     })
-  }
 
+    const id = this.route.snapshot.params['id'];
+    if (id) {
+      this.bookService.getById(id).subscribe({
+        next: (res) => {
+          const createdAtDate = new Date(res.createdAt);
+          if (!isNaN(createdAtDate.getTime())) {
+            createdAtDate.setDate(createdAtDate.getDate() + 1);
+            const formattedDate = createdAtDate.toISOString().split('T')[0];
+            this.frm.get('createdAt')?.setValue(formattedDate); 
+          } else {
+            this.frm.get('createdAt')?.setValue(''); 
+          }
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
+    }
+  }
 }

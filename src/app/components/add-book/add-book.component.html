@@ -1,11 +1,12 @@
 <div class="container w-2/3 w-1/2 px-4 py-4 overflow-x-auto mt-4">
-   <h2 class="text-3xl font-semibold leading-normal mt-0 mb-5 text-gray-800">Add Book</h2>
+   <h2 class="text-3xl font-semibold leading-normal mt-0 mb-5 text-gray-800">{{ frm.value.id ? 'Edit Book' : 'Add Book'
+      }}</h2>
    <form [formGroup]="frm" (ngSubmit)="onPost()">
       <input type="hidden" formControlName="id">
 
       <!-- Title -->
       <div class="mb-6">
-         <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
+         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
          <input type="text" formControlName="title"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
          <p *ngIf="f['title'].invalid && (f['title'].dirty || f['title'].touched)"
@@ -15,9 +16,9 @@
       <!-- Date -->
       <div class="mb-6">
          <label for="createdAt" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
-         <input type="text" formControlName="createdAt"
+         <input type="date" formControlName="createdAt"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-         <p *ngIf="f['createdAt'].invalid && (f['createdAt'].dirty || f['createdAt'].touched)"
+         <p *ngIf="f['createdAt'].invalid && (f['createdAt'].dirty || f['createdAt'].touched) "
             class="mt-2 text-sm text-red-600 dark:text-red-500">Please fill this field</p>
       </div>
 

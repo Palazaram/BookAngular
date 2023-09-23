@@ -1,10 +1,11 @@
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {Book} from '../models/book';
-import {environment} from 'src/environments/environment.development';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Book } from '../models/book';
+import { environment } from 'src/environments/environment.development';
 
-import {Status} from '../models/status';
-import {Observable, of} from 'rxjs';
+import { Status } from '../models/status';
+import { Observable, of } from 'rxjs';
+import { Statistic } from '../models/statistic';
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +31,12 @@ export class BookService {
   }
 
   getall(term: string = ""): Observable<Book[]> {
-    //return this.http.get<Book[]>(this.baseUrl + `/getall?term=${term}`);
-    return this.http.get<Book[]>('assets/books.json');
+    return this.http.get<Book[]>(this.baseUrl + `/getall?term=${term}`);
+    //return this.http.get<Book[]>('assets/books.json');
+  }
+
+  getBookStatistic() {
+    return this.http.get<Statistic[]>(this.baseUrl + `/getbookstatistic`)
   }
 
 }
